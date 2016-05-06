@@ -1,2 +1,2 @@
 # datasciencefromscratch
-My Scala version of theMachine Learning code  developed working through the book: "Data Science from Scratch". 
+My Scala version of the Machine Learning code  developed working through the book: "Data Science from Scratch". 
