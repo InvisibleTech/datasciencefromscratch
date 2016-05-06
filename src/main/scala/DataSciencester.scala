@@ -21,7 +21,7 @@ object DataSciencester {
         A lot of the code here is an experiment in using immutable collections to parallel code written 
         in Python from the book: Data Science from Scratch
 
-        That book makes have use of List and Map, and uses them in a mutable fashion.  This code is not
+        That book makes heavy use of List and Map, and uses them in a mutable fashion.  This code is not
         an efficient or refined model.  In some cases it is extreme - like applyFriends which uses 
         lazy evaluation and currying like patterns to allow me to get a friend before I even know who 
         their friends are.  I am certain - due to lack of depth in Scala FP - there are better ways.
