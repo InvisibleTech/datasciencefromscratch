@@ -47,10 +47,23 @@ object DataSciencester {
        users(selfIndex)("friends").asInstanceOf[List[scala.Function1[List[Map[String, Any]], Map[String, Any]]]](friendIndex)(users)
     }
 
-    def totalConnections(users: List[Map[String, Any]], friendships: List[(Int, Int)]) = {
-        val connectedUsers = applyFriends(users, friendships)
-
-        connectedUsers.map(u => u("friends").asInstanceOf[List[_]].size).sum
+    def totalConnections(connectedUsers: List[Map[String, Any]]) = {
+        connectedUsers.map(numberOfFriends(_)).sum
     }
 
+    def numberOfFriends(connectedUser: Map[String, Any]) = {
+        connectedUser.get("friends").map(_.asInstanceOf[List[_]].size).getOrElse(0)
+    }
+
+    def averageNumberOfFriends(connectedUsers: List[Map[String, Any]]) = {
+        totalConnections(connectedUsers) / connectedUsers.size.toDouble
+    }
+
+    def numberOfFriendsById(connectedUsers: List[Map[String, Any]]) = {
+        connectedUsers.map(u => (u("id").asInstanceOf[Int], numberOfFriends(u)))
+    }
+
+    def sortedNumberOfFriendsById(numberOfFriendsById: List[(Int, Int)]) = {
+        numberOfFriendsById.sorted(Ordering.by((_: Tuple2[Int, Int])._2).reverse)    
+    }
 }

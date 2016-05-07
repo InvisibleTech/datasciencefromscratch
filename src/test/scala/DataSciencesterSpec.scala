@@ -20,12 +20,12 @@ class DataSciencesterSpec extends FunSpec {
 
   describe("We should be able to establish friendships immutably and with delayed evaluation") {
     it("should allow following friends from myself and back again") {
-        val friedships = List((0, 1))
+        val friendships = List((0, 1))
         val users = List(
         Map("id" -> 0, "name" -> "Hero"),
         Map("id" -> 1, "name" -> "Dunn"))
 
-        val result = applyFriends(users, friedships)
+        val result = applyFriends(users, friendships)
 
         assert(result.size == 2)
 
@@ -38,8 +38,28 @@ class DataSciencesterSpec extends FunSpec {
   }
 
   describe("We should be able to get the expected statistics") {
-    it("we can get the total number of connections") {
-      assert(totalConnections(users, friendships) == 24)
+    it("total number of connections") {
+      assert(totalConnections(applyFriends(users, friendships)) == 24)
+    }
+
+    it("number of friends of one user") {
+      assert(numberOfFriends(applyFriends(users, friendships)(1)) == 3)
+    }
+
+    it("avg number of friends") {
+      assert(averageNumberOfFriends(applyFriends(users, friendships)) == 2.4)
+    }
+
+    it("number of friends by id") {
+      val friends = applyFriends(users, friendships)
+      assert(numberOfFriendsById(friends).size == 10)
+      assert(numberOfFriendsById(friends) == List((0,2), (5,3), (1,3), (6,2), (9,1), (2,3), (7,2), (3,3), (8,3), (4,2)))
+    }
+
+    it("sorted number of friends by id") {
+      val friends = numberOfFriendsById(applyFriends(users, friendships))
+      assert(sortedNumberOfFriendsById(friends).size == 10)
+      assert(sortedNumberOfFriendsById(friends) == List((5,3), (1,3), (2,3), (3,3), (8,3), (0,2), (6,2), (7,2), (4,2), (9,1)))
     }
   }
 }
