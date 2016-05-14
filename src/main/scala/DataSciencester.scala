@@ -33,6 +33,9 @@ object DataSciencester {
 
     val friendships = List((0, 1), (0, 2), (1, 2), (1, 3), (2, 3), (3, 4), (4, 5), (5, 6), (5, 7), (6, 8), (7, 8), (8, 9))
 
+
+    type deferedFriend = scala.Function1[List[Map[String, Any]], Map[String, Any]]
+
     def createBiDirectionalRelations(relations: List[(Int, Int)]): List[(Int, Int)] = {
         relations.flatMap(r => List(r, (r._2, r._1)))
     }
@@ -40,11 +43,21 @@ object DataSciencester {
     def applyFriends(users: List[Map[String, Any]], friendships: List[(Int, Int)]) = {
         val biRelations = createBiDirectionalRelations(friendships)
 
-        biRelations.groupBy(_._1).toList.map(g => users(g._1) + ("friends" -> g._2.map(r => (u: List[Map[String, Any]]) => (u(r._2)) )))
+        biRelations.groupBy(_._1).toList.map(g => users(g._1) + ("friends" -> g._2.map(r => (u: List[Map[String, Any]]) => (u.filter(m => resolveField(m, "id") == r._2).head) )))
     }
 
-    def resolveFriend(users: List[Map[String, Any]], selfIndex: Int, friendIndex: Int) = {
-       users(selfIndex)("friends").asInstanceOf[List[scala.Function1[List[Map[String, Any]], Map[String, Any]]]](friendIndex)(users)
+    def resolveListOfFriendFunctions(connectedUser: Map[String, Any]) = {
+        connectedUser.get("friends").map(_.asInstanceOf[List[deferedFriend]])
+                        .getOrElse(List[deferedFriend]())
+    }
+
+    def reifyFriends(connectedUser: Map[String, Any], users: List[Map[String, Any]]) = {
+      resolveListOfFriendFunctions(connectedUser).map(f => f(users))
+    }
+
+    def resolveFriendById(users: List[Map[String, Any]], selfId: Int, friendId: Int) = {
+       reifyFriends(users.filter(m => resolveField(m, "id") == selfId).head, users)
+            .filter(m => resolveField(m, "id") == friendId).head
     }
 
     def totalConnections(connectedUsers: List[Map[String, Any]]) = {
@@ -52,7 +65,7 @@ object DataSciencester {
     }
 
     def numberOfFriends(connectedUser: Map[String, Any]) = {
-        connectedUser.get("friends").map(_.asInstanceOf[List[_]].size).getOrElse(0)
+        resolveListOfFriendFunctions(connectedUser).size
     }
 
     def averageNumberOfFriends(connectedUsers: List[Map[String, Any]]) = {
@@ -65,5 +78,22 @@ object DataSciencester {
 
     def sortedNumberOfFriendsById(numberOfFriendsById: List[(Int, Int)]) = {
         numberOfFriendsById.sorted(Ordering.by((_: Tuple2[Int, Int])._2).reverse)    
+    }
+
+    def resolveField[T](connectedUser: Map[String, Any], name: String) = {
+        connectedUser.get(name).map(_.asInstanceOf[T]).getOrElse(null)
+    }
+
+    def countOfCommonFoFs(connectedUser: Map[String, Any], users: List[Map[String, Any]]) = {
+      val friendsOfUser = reifyFriends(connectedUser, users)
+      val listOfFriendIds = friendsOfUser.map(f => resolveField[Int](f, "id"))
+
+      // Want to build a series of groupbys
+      friendsOfUser.map(f => ((resolveField[Int](f, "id")),
+                              reifyFriends(f, users)
+                                .map(f => resolveField[Int](f, "id")) ++ listOfFriendIds ))
+
+      // WIP not finished - no test.
+
     }
 }

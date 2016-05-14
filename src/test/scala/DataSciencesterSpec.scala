@@ -29,10 +29,10 @@ class DataSciencesterSpec extends FunSpec {
 
         assert(result.size == 2)
 
-        val friendOfHero = resolveFriend(result, 0, 0)
+        val friendOfHero = resolveFriendById(result, 0, 1)
         assert(friendOfHero("name") == "Dunn")
 
-        val friendOfDunn = resolveFriend(result, 1, 0)
+        val friendOfDunn = resolveFriendById(result, 1, 0)
         assert(friendOfDunn("name") == "Hero")
     }
   }
@@ -60,6 +60,10 @@ class DataSciencesterSpec extends FunSpec {
       val friends = numberOfFriendsById(applyFriends(users, friendships))
       assert(sortedNumberOfFriendsById(friends).size == 10)
       assert(sortedNumberOfFriendsById(friends) == List((5,3), (1,3), (2,3), (3,3), (8,3), (0,2), (6,2), (7,2), (4,2), (9,1)))
+    }
+
+    it("counts number of friends have in common with friends") {
+
     }
   }
 }
