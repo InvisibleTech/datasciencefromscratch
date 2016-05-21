@@ -3,6 +3,7 @@ package org.invisibletech.datasciencefromscratch
 object DataSciencester {
 
     // Trying to do this with immutable collections.  ^_^`
+    // A property of this simple case is that we order the  maps by id which match the indexes.
     val users = List(
         Map("id" -> 0, "name" -> "Hero"),
         Map("id" -> 1, "name" -> "Dunn"),
@@ -43,7 +44,9 @@ object DataSciencester {
     def applyFriends(users: List[Map[String, Any]], friendships: List[(Int, Int)]) = {
         val biRelations = createBiDirectionalRelations(friendships)
 
-        biRelations.groupBy(_._1).toList.map(g => users(g._1) + ("friends" -> g._2.map(r => (u: List[Map[String, Any]]) => (u.filter(m => resolveField(m, "id") == r._2).head) )))
+        biRelations.groupBy(_._1).toList.map(g => users(g._1) + 
+          ("friends" -> g._2.map(r => (u: List[Map[String, Any]]) => (u.filter(m => resolveField(m, "id") == r._2).head) )))
+          .sortBy(m => m("id").asInstanceOf[Int])
     }
 
     def resolveListOfFriendFunctions(connectedUser: Map[String, Any]) = {
@@ -88,12 +91,10 @@ object DataSciencester {
       val friendsOfUser = reifyFriends(connectedUser, users)
       val listOfFriendIds = friendsOfUser.map(f => resolveField[Int](f, "id"))
 
-      // Want to build a series of groupbys
       friendsOfUser.map(f => ((resolveField[Int](f, "id")),
                               reifyFriends(f, users)
-                                .map(f => resolveField[Int](f, "id")) ++ listOfFriendIds ))
-
-      // WIP not finished - no test.
-
+                                .map(f => resolveField[Int](f, "id"))
+                                .filter(c => listOfFriendIds.contains(c))
+                                .size ))
     }
 }
