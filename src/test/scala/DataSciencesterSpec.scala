@@ -1,6 +1,7 @@
 package org.invisibletech.datasciencefromscratch
 
 import DataSciencester._
+import DataSciencesterTestDataFixture._
 
 import org.scalatest.FunSpec
 
