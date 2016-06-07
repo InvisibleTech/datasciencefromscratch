@@ -1,11 +1,11 @@
 package org.invisibletech.datasciencefromscratch
 
 import DataSciencester._
-import DataSciencester.CompiledUsers._
+import DataSciencester.UserWithRelationships._
 
 import org.scalatest.FunSpec
 
-class CompiledUsersSpec extends FunSpec {
+class UserWithRelationshipsSpec extends FunSpec {
   describe("Relations can be made bidirectional") {
     it("should show graph edge both ways"){
       val result = createBiDirectionalRelations(List((1, 2)))  
@@ -26,7 +26,7 @@ class CompiledUsersSpec extends FunSpec {
         Map("id" -> 0, "name" -> "Hero"),
         Map("id" -> 1, "name" -> "Dunn"))
 
-        val result = applyFriends(users, friendships)
+        val result = UserWithRelationships(users, friendships)
 
         assert(result.size == 2)
 

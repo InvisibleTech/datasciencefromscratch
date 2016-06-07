@@ -22,12 +22,12 @@ object DataSciencester {
 
   type DeferedFriend = scala.Function1[List[User], User]
 
-  object CompiledUsers {
+  object UserWithRelationships {
     def createBiDirectionalRelations(relations: Friendships): Friendships = {
       relations.flatMap(r => List(r, (r._2, r._1)))
     }
 
-    def applyFriends(users: UsersRaw, friendships: Friendships) = {
+    def apply(users: UsersRaw, friendships: Friendships) = {
       val biRelations = createBiDirectionalRelations(friendships)
 
       biRelations.groupBy(_._1).toList.map(g => users(g._1) +
@@ -35,9 +35,25 @@ object DataSciencester {
         .sortBy(m => m("id").asInstanceOf[Int])
     }
   }
+/*
+I have some serious questions about what is where.
+
+I think this is getting worse.  So, let's come up with some kind of 
+design theme.
+
+[1] There is some compiling of Users.  This should produce a collection of CompiledUser
+classes.  Not Maps.  Fuck that I mean, that is a Clojure, Python and Ruby way.  Which
+is fine except this is Scala.  So we need a CompiledUser  which is a case class 
+For the love of design use an ImmutableList for the friendships. See about apply
+and unapply to help with cloning.
+
+[2] CompiledUser(s) should be under a collecton by user Id as CompiledUsers which 
+is the implicit class we compile from the User and Friendship data into a map
+of CompiledUser objects keyed by id
+*/
 
   implicit class CompiledUsers(rawData: (UsersRaw, Friendships)) {
-    lazy val usersWithFriends = CompiledUsers.applyFriends(rawData._1, rawData._2)
+    lazy val usersWithFriends = UserWithRelationships(rawData._1, rawData._2)
     lazy val usersById: Map[Int, Map[String, Any]] = usersWithFriends
                       .map(u => (u("id").asInstanceOf[Int], u))
                       .toMap
