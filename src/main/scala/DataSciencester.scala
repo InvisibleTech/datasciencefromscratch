@@ -22,6 +22,30 @@ object DataSciencester {
 
   type DeferedFriend = scala.Function1[List[User], User]
 
+  case class CompiledUser(id: Int, name: String, friends: List[scala.Function0[CompiledUser]])
+
+  implicit class CompiledUserDirectory(rawData: (UsersRaw, Friendships)) {
+    lazy val usersWithFriends: List[CompiledUser] = compile(rawData._1, rawData._2)
+    lazy val usersById: Map[Int, CompiledUser] = usersWithFriends
+                      .map(u => (u.id, u))
+                      .toMap
+
+    def createBiDirectionalRelations(relations: Friendships): Friendships = {
+      relations.flatMap(r => List(r, (r._2, r._1)))
+    }
+
+    def compile(users: UsersRaw, friendships: Friendships) = {
+      val biRelations = createBiDirectionalRelations(friendships)
+
+      biRelations.groupBy(_._1).toList.map(g => 
+                      CompiledUser(users(g._1)("id").asInstanceOf[Int],
+                                    users(g._1)("name").asInstanceOf[String],   
+                                    g._2.map(r => () => usersById(r._2)))
+                      ).sortBy(u => u.id)
+    }
+  }
+
+
   object UserWithRelationships {
     def createBiDirectionalRelations(relations: Friendships): Friendships = {
       relations.flatMap(r => List(r, (r._2, r._1)))
