@@ -13,9 +13,9 @@ class DataSciencesterSpec extends FunSpec {
     }
 
     it("number of friends of one user") {
-      val compiled: CompiledUsers = (users, friendships)
+      val compiled: CompiledUserDirectory = (users, friendships)
 
-      assert(numberOfFriends(compiled.usersWithFriends(1)) == 3)
+      assert(compiled.usersWithFriends(1).friends.size == 3)
     }
 
     it("avg number of friends") {
@@ -34,10 +34,10 @@ class DataSciencesterSpec extends FunSpec {
       assert(sortedNumberOfFriendsById(friends) == List((1,3), (2,3), (3,3), (5,3), (8,3), (0,2), (4,2), (6,2), (7,2), (9,1)))
     }
 
-    // it("counts number of friends have in common with friends") {
-    //   val friends = (users, friendships)
-    //   assert(countOfCommonFoFs(friends.usersWithFriends(1), friends) == List((0,1), (2,2), (3,1)))
-    // }
+    it("counts number of friends have in common with friends") {
+      val friends = (users, friendships)
+      assert(countOfCommonFoFs(friends.usersWithFriends(1), friends) == List((0,1), (2,2), (3,1)))
+    }
   }
 }
 
