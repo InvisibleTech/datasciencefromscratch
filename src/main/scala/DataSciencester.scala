@@ -72,4 +72,8 @@ object DataSciencester {
   def compileInterestsToUsers(interests: List[(Int, String)]) = {
     interests.map(i => (i._2, i._1)).groupBy(_._1).map({ case (k, v) => (k, v.map(_._2)) })
   }
+
+  def compileUsersToInterests(interests: List[(Int, String)]) = {
+    interests.groupBy(_._1).map({case (k, v) => (k, v.map(_._2))})
+  }
 }

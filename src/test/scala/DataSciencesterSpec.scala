@@ -38,6 +38,18 @@ class DataSciencesterSpec extends FunSpec {
       val friends = (users, friendships)
       assert(countOfCommonFoFs(friends.usersWithFriends(1), friends) == List((0,1), (2,2), (3,1)))
     }
+
+    it("compiles interests for each user id") {
+      val interestsToUsersMap: Map[String, List[Int]] = compileInterestsToUsers(interests)
+      assert(interestsToUsersMap("regression") == List(3, 4))
+      assert(interestsToUsersMap("Python") == List(2, 3, 5))
+    }
+
+    it("compiles user intererests") {
+      val interestsToUsersMap: Map[Int, List[String]] = compileUsersToInterests(interests)
+      assert(interestsToUsersMap(3) == List("R", "Python", "statistics", "regression", "probability"))
+      
+    }
   }
 }
 
