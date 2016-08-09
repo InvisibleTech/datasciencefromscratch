@@ -12,5 +12,5 @@ their friends are.  I am certain - due to lack of depth in Scala FP - there are 
 
 I will try to keep driving this FP, Immutable Approach as long as possible.  Or until I surrender
 and follow along with Python creating non-FP, mutable Scala.  I am trying to learn more about ML
-by implementing it.  So I am trying to have fun.  Also, I am not very experienced with Python, basically this is like mrtial arts training under an icy waterfall, fighting bears in the mountainas during winater.
+by implementing it.  So I am trying to have fun.  Also, I am not very experienced with Python.  This exercise is like martial arts training under an icy waterfall, fighting bears in the mountains in the dead of winter (these bears happen to be insomniacs).
 
